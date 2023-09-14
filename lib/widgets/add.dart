@@ -20,11 +20,14 @@ class AddPage extends StatelessWidget {
             TextField(decoration: InputDecoration(hintText: "Enter item place"),
             controller: placeEditingController,),
             ElevatedButton(onPressed: (){
-              print(nameEditingController.text);
-              print(descEditingController.text);
-              print(placeEditingController.text);
 
-              Navigator.pop(context);
+//2) In add.dart, the item need to passed back is sent as the second parameter of navigator.pop
+              var itemToPassed = {
+                "name":nameEditingController.text,
+                "description":descEditingController.text,
+                "place":placeEditingController.text
+              };
+              Navigator.pop(context, itemToPassed);
 
 
             }, child: Text("Add new item"))

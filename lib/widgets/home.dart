@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:todos_sept23/widgets/add.dart';
 import 'package:todos_sept23/widgets/detail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,17 +32,64 @@ class _HomePageState extends State<HomePage> {
     }
   ];
 
+
+   // When the page is loaded...
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
+
+  void loadData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var todoString = prefs.getString("todos");
+    if (todoString != null){
+      // We need to transform the String (stored inside our shared preference)
+      // into List<dynamic>
+
+      var todoList = jsonDecode(todoString);
+      setState(() {
+        _todos = todoList;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("To Do App"),
-        actions: [IconButton(onPressed: () {
+        actions: [
+          IconButton(onPressed: () async {
+// 1) Create variable to retrieve the item from new Page, and wait for the page to finish
+          // If await is used, need to add async to the nearest function {}
 
-          Navigator.push(
+          var newItem = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context)=> AddPage())
           );
+
+          if (newItem != null){
+            _todos.add(newItem);
+
+            // SAVE IN SHARED PREFERENCES
+// GET THE SHARED PREFERENCE MANAGER (AS IF DOING File in words)
+            final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+            // SAVE...
+            // Transform List of Map <String,String> into String using jsonEncode
+            // Save it as a String
+            //  first parameter is the file name,
+            // second parameter data that's going to be saved
+            prefs.setString("todos", jsonEncode(_todos));
+            setState(() {
+              _todos;
+            });
+          }
+
+
 
         }, icon: Icon(Icons.add))],
       ),
