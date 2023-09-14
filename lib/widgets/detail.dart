@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DetailPage extends StatelessWidget {
 
   // 1) Create a property/variable to store passed item
-  final Map<String,String> todo;
+  final Map<String,dynamic> todo;
 
   // 2) Create the constructor of the class to receive the item
 

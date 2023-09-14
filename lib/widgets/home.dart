@@ -15,21 +15,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   var _todos = [
-    {
-      "name":"Learn Listview",
-      "place":"Online Teams",
-      "description":"Learn Listviewm, Listtile, navigation part 2"
-    },
-    {
-      "name":"Have Lunch",
-      "place":"Room / Order",
-      "description":"KFC Rice Meals"
-    },
-    {
-      "name":"Con call with teams",
-      "place":"GMeet",
-      "description":"Follow up on Flutter app"
-    }
+    // {
+    //   "name":"Learn Listview",
+    //   "place":"Online Teams",
+    //   "description":"Learn Listviewm, Listtile, navigation part 2"
+    // },
+    // {
+    //   "name":"Have Lunch",
+    //   "place":"Room / Order",
+    //   "description":"KFC Rice Meals"
+    // },
+    // {
+    //   "name":"Con call with teams",
+    //   "place":"GMeet",
+    //   "description":"Follow up on Flutter app"
+    // }
   ];
 
 
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     var todoString = prefs.getString("todos");
     if (todoString != null){
       // We need to transform the String (stored inside our shared preference)
-      // into List<dynamic>
+      // into dynamic
 
       var todoList = jsonDecode(todoString);
       setState(() {
