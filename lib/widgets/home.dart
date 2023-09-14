@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   var _todos = [
     // {
     //   "name":"Learn Listview",
@@ -32,8 +31,7 @@ class _HomePageState extends State<HomePage> {
     // }
   ];
 
-
-   // When the page is loaded...
+  // When the page is loaded...
   @override
   void initState() {
     // TODO: implement initState
@@ -44,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   void loadData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var todoString = prefs.getString("todos");
-    if (todoString != null){
+    if (todoString != null) {
       // We need to transform the String (stored inside our shared preference)
       // into dynamic
 
@@ -55,6 +53,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void saveInStorage() async {
+    // SAVE IN SHARED PREFERENCES
+// GET THE SHARED PREFERENCE MANAGER (AS IF DOING File in words)
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // SAVE...
+    // Transform List of Map <String,String> into String using jsonEncode
+    // Save it as a String
+    //  first parameter is the file name,
+    // second parameter data that's going to be saved
+    prefs.setString("todos", jsonEncode(_todos));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,36 +72,25 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("To Do App"),
         actions: [
-          IconButton(onPressed: () async {
+          IconButton(
+              onPressed: () async {
 // 1) Create variable to retrieve the item from new Page, and wait for the page to finish
-          // If await is used, need to add async to the nearest function {}
+                // If await is used, need to add async to the nearest function {}
 
-          var newItem = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context)=> AddPage())
-          );
+                var newItem = await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddPage()));
 
-          if (newItem != null){
-            _todos.add(newItem);
+                if (newItem != null) {
+                  _todos.add(newItem);
+                  saveInStorage();
 
-            // SAVE IN SHARED PREFERENCES
-// GET THE SHARED PREFERENCE MANAGER (AS IF DOING File in words)
-            final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-            // SAVE...
-            // Transform List of Map <String,String> into String using jsonEncode
-            // Save it as a String
-            //  first parameter is the file name,
-            // second parameter data that's going to be saved
-            prefs.setString("todos", jsonEncode(_todos));
-            setState(() {
-              _todos;
-            });
-          }
-
-
-
-        }, icon: Icon(Icons.add))],
+                  setState(() {
+                    _todos;
+                  });
+                }
+              },
+              icon: Icon(Icons.add))
+        ],
       ),
       body: ListView.builder(
           padding: const EdgeInsets.all(8),
@@ -103,36 +102,47 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (BuildContext context, int index) {
             return Card(
               child: ListTile(
+                leading: _todos[index]["completed"] ?  Icon(Icons.check)  : SizedBox(),
                 title: Text(_todos[index]["name"]!),
                 subtitle: Text(_todos[index]["place"]!),
                 trailing: Icon(Icons.chevron_right),
                 onTap: () async {
-                var action = await  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context)=>DetailPage(
-                      // 3) Pass the data in the constructor of DetailPage
-                      todo: _todos[index],
-                      index: index,
-                    ))
-                  );
+                  var action = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailPage(
+                                // 3) Pass the data in the constructor of DetailPage
+                                todo: _todos[index],
+                                index: index,
+                              )));
 
-                if (action != null){
-                  if (action["action"] == 0){
-                    // edit
+                  if (action != null) {
+                    if (action["action"] == 0) {
+                      // edit
+                      // change the status of completed
+                      _todos[index]["completed"] = !_todos[index]["completed"];
+                      saveInStorage();
+                      setState(() {
+                        _todos;
+                      });
+
+                    } else {
+                      // delete
+                      _todos.removeAt(action["index"]);
+                      saveInStorage();
+                      setState(() {
+                        _todos;
+                      });
+                    }
                   }
-                  else {
-                    // delete
-                    _todos.removeAt(action["index"]);
-                    setState(() {
-                      _todos;
-                    });
-                  }
-                }
+
+                  /// Save the data in SharedPref
+                  ///
+                  ///
                 },
               ),
             );
-          }
-      ),
+          }),
     );
   }
 }

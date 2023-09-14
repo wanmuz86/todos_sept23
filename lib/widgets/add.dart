@@ -25,7 +25,8 @@ class AddPage extends StatelessWidget {
               var itemToPassed = {
                 "name":nameEditingController.text,
                 "description":descEditingController.text,
-                "place":placeEditingController.text
+                "place":placeEditingController.text,
+                "completed":false
               };
               Navigator.pop(context, itemToPassed);
 

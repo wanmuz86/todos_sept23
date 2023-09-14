@@ -27,9 +27,14 @@ class DetailPage extends StatelessWidget {
             children: [
               ElevatedButton.icon(onPressed: (){
 
+                var userAction = {
+                  "action":0, // ASsuming 0 is edit completed and 1 is delete
+                  "index":1
+                };
+                Navigator.pop(context, userAction);
 
               },
-                  icon: Icon(Icons.check), label: Text("Mark as complete")),
+                  icon: Icon(Icons.check), label: todo["completed"] ?  Text("Unmark as complete") :  Text("Mark as complete")),
               ElevatedButton.icon(onPressed: (){
 
                 var userAction = {
